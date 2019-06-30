@@ -9,7 +9,7 @@ import sys
 # file names
 order_products = str(sys.argv[1])
 products = str(sys.argv[2])
-report = str(sys.argv[2])
+report = str(sys.argv[3])
 # constant variables
 PRODUCT_ID = 'product_id'
 REORDERED = 'reordered'
@@ -52,11 +52,18 @@ with open(products) as file2:
  # sort the dictionary based on department in ascending order           
 sorted_departments = sorted(department_dict.items(), key=lambda x: x[0])
 # write to a file
-with open(report,"w") as report_file:
-    report_file.write("department_id,number_of_orders,number_of_first_orders,percentage\n")
-    for tupl in sorted_departments:
-        report_file.write('{}, {}, {}, {}'.format(tupl[0], tupl[1][0], 
-                              tupl[1][1], round(tupl[1][1]/tupl[1][0], 2)))
-        report_file.write('\n')
+report_file = open(report, "w")
+output = ["department_id,number_of_orders,number_of_first_orders,percentage\n"]
+output += [str(tupl[0]) + "," + str(tupl[1][0]) + "," + 
+           str(tupl[1][1])+ "," + str(round(tupl[1][1]/tupl[1][0], 2)) + "\n" for tupl in sorted_departments]     
+report_file.writelines(output)
+report_file.close()
+
+#with open(report,"w") as report_file:
+#    report_file.write("department_id,number_of_orders,number_of_first_orders,percentage\n")
+#    for tupl in sorted_departments:
+#        report_file.write('{}, {}, {}, {}'.format(tupl[0], tupl[1][0], 
+#                              tupl[1][1], round(tupl[1][1]/tupl[1][0], 2)))
+#        report_file.write('\n')
 
 
