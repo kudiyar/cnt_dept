@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 26 22:16:10 2019
-
-@author: Asus
-"""
 
 import sys
 # file names
@@ -16,12 +11,12 @@ REORDERED = 'reordered'
 DEPARTMENT_ID = 'department_id'
 # read the file and sum the orders per product
 product_dict = {}
-with open(order_products) as file:
-    headers = next(file).strip('\n').split(',')
+with open(order_products) as orders_file:
+    headers = next(orders_file).strip('\n').split(',')
     # indices
     product_id_idx = headers.index(PRODUCT_ID)
     reordered_idx = headers.index(REORDERED)
-    for line in file:
+    for line in orders_file:
         product = line.strip("\n").split(',')[product_id_idx]
         new_order = 0 if int(line.strip("\n").split(',')[reordered_idx]) > 0 else 1
         if product in product_dict:
@@ -31,11 +26,11 @@ with open(order_products) as file:
             product_dict[product] = [1, new_order]
 # read the file and sum the products per department
 department_dict = {}
-with open(products) as file2:
-    headers = next(file2).strip('\n').split(',')
+with open(products) as products_file:
+    headers = next(products_file).strip('\n').split(',')
     product_id_idx = headers.index(PRODUCT_ID)
     department_id_idx = -1  # it is the last column
-    for line in file2:
+    for line in products_file:
         department = int(line.strip("\n").split(',')[department_id_idx])
         product =  line.strip("\n").split(',')[product_id_idx]
         if department in department_dict:
