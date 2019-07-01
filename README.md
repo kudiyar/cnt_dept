@@ -25,4 +25,4 @@ I used dictionaries for faster lookup where I had products and departments as ke
 * The repository is private but will be made public after the deadline
 
 
-** Thanks for reading and reviewing my work 
+**Thanks for reading and reviewing my work **
