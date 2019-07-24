@@ -1,0 +1,181 @@
+/*PASSWORD novo__0000*/
+/* select sample_id, replicate, (dry_wt - pan_wt)/(wet_wt - pan_wt) as pct 
+from dry_solids 
+where date > timestamp '2018-06-26 13:15:43' 
+order by sample_id
+limit 10; */
+
+## from here it will be about flask
+set FLASK_APP = hello.py
+python -m flask run
+
+#set FLASK_ENV = development
+#python -m flask run
+
+## SQL Commands
+create table d_test(sample_id INTEGER, time varchar (10), replicate INTEGER, pan_wt DOUBLE PRECISION, wet_wt DOUBLE PRECISION, pandry DOUBLE PRECISION);
+alter table d_test
+add constraint uq_d_test unique(sample_id, replicate)
+or
+create table dry_solids(sample_id varchar (20),replicate INTEGER, date timestamp, pan_wt DOUBLE PRECISION, wet_wt DOUBLE PRECISION, dry_wt DOUBLE PRECISION, unique(sample_id, replicate));
+create table hunter_color(sample_id varchar (20), replicate INTEGER, date timestamp, color DOUBLE PRECISION, unique(sample_id, replicate));
+create table hplc(sample_id varchar(20), replicate INTEGER, date timestamp, dp4 DOUBLE PRECISION, dp3 DOUBLE PRECISION, dp2 DOUBLE PRECISION, glucose DOUBLE PRECISION, fructose DOUBLE PRECISION, lactic_acid DOUBLE PRECISION, glycerol DOUBLE PRECISION, acetic_acid DOUBLE PRECISION, butane_2_3_diol_a DOUBLE PRECISION, butane_2_3_diol_b DOUBLE PRECISION, ethanol DOUBLE PRECISION, batch_report_path varchar(100), unique(sample_id, replicate));
+create table fusels(sample_id varchar(20), replicate INTEGER, date timestamp, methanol DOUBLE PRECISION, ethanol DOUBLE PRECISION, isopropyl_alcohol DOUBLE PRECISION, n_propyl_alcohol DOUBLE PRECISION, isobutyl_alcohol DOUBLE PRECISION, n_butyl_alcohol DOUBLE PRECISION, isoamyl_alcohol DOUBLE PRECISION, n_amyl_alcohol DOUBLE PRECISION, unique(sample_id, replicate));
+create table crude_fat(sample_id varchar(20), replicate INTEGER, date timestamp, pct_DS DOUBLE PRECISION, fat DOUBLE PRECISION, unique(sample_id, replicate));
+create table insoluable_solids(sample_id varchar (20),replicate INTEGER, date timestamp, pan_wt DOUBLE PRECISION, wet_wt DOUBLE PRECISION, dry_wt DOUBLE PRECISION, unique(sample_id, replicate));
+create table saccharification(sample_id varchar (20),replicate INTEGER, tray_id INTEGER, date timestamp, sample_volume DOUBLE PRECISION, sample_weight DOUBLE PRECISION, glucose DOUBLE PRECISION, unique(sample_id, replicate, tray_id));
+create table pan(sample_id varchar (20),replicate INTEGER, tray_id INTEGER, date timestamp, initial_absorbance DOUBLE PRECISION, final_absorbance DOUBLE PRECISION, unique(sample_id, replicate, tray_id));
+create table anion_exchange(sample_id varchar(20), replicate INTEGER, date timestamp, dp4_i DOUBLE PRECISION, dp3_i DOUBLE PRECISION, dp2_i DOUBLE PRECISION, glucose_i DOUBLE PRECISION, fructose_i DOUBLE PRECISION, lactic_acid_i DOUBLE PRECISION, glycerol_i DOUBLE PRECISION, acetic_acid_i DOUBLE PRECISION, butane_2_3_diol_a_i DOUBLE PRECISION, butane_2_3_diol_b_i DOUBLE PRECISION, ethanol_i DOUBLE PRECISION,  
+dp4_f DOUBLE PRECISION, dp3_f DOUBLE PRECISION, dp2_f DOUBLE PRECISION, glucose_f DOUBLE PRECISION, fructose_f DOUBLE PRECISION, lactic_acid_f DOUBLE PRECISION, glycerol_f DOUBLE PRECISION, acetic_acid_f DOUBLE PRECISION, butane_2_3_diol_a_f DOUBLE PRECISION, butane_2_3_diol_b_f DOUBLE PRECISION, ethanol_f DOUBLE PRECISION, batch_report_path varchar(100), unique(sample_id, replicate));
+create table ic_carbs(sample_id varchar(20), replicate INTEGER, date timestamp, trehalose DOUBLE PRECISION, glucose DOUBLE PRECISION, isomaltose DOUBLE PRECISION, isomaltotriose DOUBLE PRECISION, maltose DOUBLE PRECISION, panose DOUBLE PRECISION, altotriose DOUBLE PRECISION, maltotetraose DOUBLE PRECISION, maltopentaose DOUBLE PRECISION, maltohexaose DOUBLE PRECISION, maltoheptaose DOUBLE PRECISION, unique(sample_id, replicate));
+create table index(sample_id varchar(20), 
+			replicate INTEGER, 
+			date timestamp, 
+			wt DOUBLE PRECISION, 
+			pan_wt DOUBLE PRECISION, 
+			wet_wt DOUBLE PRECISION, 
+			dry_wt DOUBLE PRECISION, 
+			vol DOUBLE PRECISION, 
+			dp4 DOUBLE PRECISION, 
+			dp3 DOUBLE PRECISION, 
+			dp2 DOUBLE PRECISION, 
+			dp1 DOUBLE PRECISION, 
+		unique(sample_id, replicate));      
+create table fusels_hplc(sample_id varchar (20),replicate INTEGER, date timestamp, propanol_1 DOUBLE PRECISION, isobutanol DOUBLE PRECISION, isoamyl_alcohol DOUBLE PRECISION, unique(sample_id, replicate));
+create table free_sodium(sample_id varchar (20),replicate INTEGER, date timestamp, sodium_ppm DOUBLE PRECISION, unique(sample_id, replicate));
+create table ammonia_urea(sample_id varchar (20), replicate INTEGER, date timestamp, run_id INTEGER, abs_1 DOUBLE PRECISION, abs_2 DOUBLE PRECISION, abs_3 DOUBLE PRECISION, unique(sample_id, replicate, run_id));
+create table fan(sample_id varchar (20), replicate INTEGER, date timestamp, run_id INTEGER, abs DOUBLE PRECISION, unique(sample_id, replicate, run_id));
+create table unique_run_id(value INTEGER); insert into unique_run_id(value) values (10000);
+create table 
+            unique_run_id("RS Saccharification" INTEGER, "FAN" INTEGER, "PAN" INTEGER, "Ammonia Urea" INTEGER); 
+insert into 
+            unique_run_id("RS Saccharification", "FAN", "PAN", "Ammonia Urea")
+values 
+            (10000, 10000, 10000, 10000);
+
+select * from unique_run_id;
+
+
+create table test (Master_ID varchar(5), Test_To_Be_Done varchar(20), Allocated_To varchar(10),Test_Status varchar(20), date varchar(24));
+alter table test add date varchar(24);
+insert into test(Master_ID, Test_to_Be_Done, Allocated_to, Test_Status) values ('12', 'dry_solids', 'DKPA', 'Assay to be started'),('13', 'dry_solids', 'KYTH', 'Assay to be assigned'), ('14', 'HPLC', 'DKPA', 'Assay to be assigned'), ('15', 'HPLC', 'DKPA', 'Assay to be started'), ('16', 'dry_solids', 'KYTH', 'Assay to be assigned'); 
+
+# dry_solids
+
+select 
+  sample_id as "Sample ID", 
+  date as "Date", 
+  round(cast(avg((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Solids (%)", 
+  round(cast(stddev((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Std Dev" 
+from dry_solids 
+where 
+  date > timestamp '2018-06-26 13:15:43' 
+group by 
+  sample_id, 
+  date
+order by 
+  sample_id
+limit 10;
+
+# insoluable_solids
+
+select 
+  sample_id as "Sample ID", 
+  date as "Date", 
+  round(cast(avg((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Solids (%)", 
+  round(cast(stddev((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Std Dev" 
+from insoluable_solids 
+where 
+  date > timestamp '2018-06-26 13:15:43' 
+group by 
+  sample_id, 
+  date
+order by 
+  sample_id
+limit 10;
+
+## anion_exchange
+
+select 
+    round(cast(dp4_f*100/dp4_i as numeric),2) as "DP4+",
+    round(cast(dp2_f*100/dp2_i as numeric),2) as "DP2",
+    round(cast(glucose_f*100/glucose_i as numeric),2) as Glucose,
+    round(cast(ethanol_f*100/ethanol_i as numeric),2) as Ethanol
+from anion_exchange;
+
+## index
+
+select 
+    round(cast(dp3*100/dp4 as numeric),2) as "%DI",
+    round(cast((dp4 + dp3 + dp2 + dp1)*vol*wt*(wet_wt - pan_wt)*100/(dry_wt - pan_wt) as numeric),2) as "%SI",
+    round(cast(dp1*100/(dp4 + dp3 + dp2 + dp1) as numeric),2) as "%GI"
+from index;
+
+
+## VIEWS - Dry solids
+create view v_dry_solids as 
+        select      sample_id as "Sample ID", 
+                    date as "Date",
+                    round(cast(avg((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Solids (%)",
+                    round(cast(stddev((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Std Dev"
+        from dry_solids
+        group by
+                    sample_id,
+                    date;
+
+## Hunter Color
+create view v_hunter_color as 
+	select 	    sample_id as "Sample ID",
+                    date as "Date", 
+                    round(cast(avg(color) as numeric), 2) 
+        from hunter_color
+        group by
+                    sample_id,
+                    date;
+
+## Anion Exchange
+create view v_anion_exchange as
+	select	
+		sample_id as "Sample ID",
+		date as "Date",
+		dp4_i as "DP4+",
+		dp2_i as "DP2",
+		glucose_i as "Glucose",
+		ethanol_i as "Ethanol",
+		dp4_f as "DP4+",
+		dp2_f as "DP2",
+		glucose_f as "Glucose",
+		ethanol_f as "Ethanol",
+		round(cast(dp4_f*100/dp4_i as numeric),2) as "DP4+",
+    		round(cast(dp2_f*100/dp2_i as numeric),2) as "DP2",
+    		round(cast(glucose_f*100/glucose_i as numeric),2) as Glucose,
+    		round(cast(ethanol_f*100/ethanol_i as numeric),2) as Ethanol
+	from anion_exchange;
+## Index
+create view v_index as 
+	select
+		sample_id as "Sample ID",
+		max(date) as "Date",
+		avg(wt) as "Wt (g)",
+		round(cast(avg((dry_wt - pan_wt)/(wet_wt - pan_wt)) as numeric), 2) as "Solids (%)",
+		avg(vol) as "Vol (ml)",
+		avg(dp4) as "DP4+",
+		avg(dp3) as "DP3",
+		avg(dp2) as "DP2",
+		avg(dp1) as "DP1", 
+    		round(cast(avg(dp3*100/dp4) as numeric),2) as "%DI",
+    		round(cast(avg((dp4 + dp3 + dp2 + dp1)*vol*wt*(wet_wt - pan_wt)*100/(dry_wt - pan_wt)) as numeric),2) as "%SI",
+    		round(cast(avg(dp1*100/(dp4 + dp3 + dp2 + dp1)) as numeric),2) as "%GI"
+	from index
+	group by
+		sample_id;
+
+
+
+
+# what if someone gets data but does not work on it 
+# 
+		text-align: left;
+
+
+
